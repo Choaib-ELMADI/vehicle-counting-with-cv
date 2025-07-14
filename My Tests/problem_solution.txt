@@ -1,0 +1,17 @@
+1. Google Colab:
+    * Error related to the used version of PyTorch.
+    * The argument 'weights_only' was by default set to 'False' is previous versions, and now it is set to 'True'.
+
+    > Fork the project main repository.
+    > Clone it.
+    > Change the return value of the function "torch_safe_load" in file "ultralytics/nn/tasks.py" with 'weights_only' set to 'False'.
+    > In Colab, clone this new updated repository.
+
+2. Jupyter Notebooks:
+    * GPU is not supported in my computer's hardware.
+
+3. Bash/Linux Commands:
+    * GPU is not supported in my computer's hardware.
+
+4. Running the Repository on Jetson Orin Nano Kit:
+    * The Jetson Orin Nano board is not available for now.
