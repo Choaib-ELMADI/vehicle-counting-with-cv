@@ -60,9 +60,6 @@ def on_predict_start(predictor, persist=False):
 @torch.no_grad()
 def run(args):
     counter_yolo = counter_YOLO(args)
-    print("\ncounter_yolo:")
-    print(counter_yolo)
-    print("\n")
 
     results = counter_yolo.track(
         source=args.source,
@@ -84,9 +81,8 @@ def run(args):
         vid_stride=args.vid_stride,
         line_width=args.line_width,
     )
-    print("\nresults:")
-    print(results)
-    print("\n")
+
+    return 1, 2, results
 
     counter_yolo.add_callback(
         "on_predict_start", partial(on_predict_start, persist=True)
@@ -295,17 +291,5 @@ def run(args):
         LOGGER.info(
             f"Results saved to {colorstr('bold', counter_yolo.predictor.save_dir)}{s}"
         )
-
-    print("\ncounter_yolo:")
-    print(counter_yolo)
-    print("\n")
-
-    print("\nprofilers:")
-    print(profilers)
-    print("\n")
-
-    print("\nresults:")
-    print(results)
-    print("\n")
 
     return counter_yolo, profilers, results
