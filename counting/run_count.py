@@ -82,6 +82,8 @@ def run(args):
         line_width=args.line_width,
     )
 
+    return 1, 2, results
+
     counter_yolo.add_callback(
         "on_predict_start", partial(on_predict_start, persist=True)
     )
@@ -264,6 +266,7 @@ def run(args):
         counter_yolo.predictor.vid_writer[-1].release()  # release final video writer
 
     # Print results
+
     if counter_yolo.predictor.args.verbose and counter_yolo.predictor.seen:
         t = tuple(
             x.t / counter_yolo.predictor.seen * 1e3 for x in profilers
