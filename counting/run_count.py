@@ -4,12 +4,6 @@ import cv2
 from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import ROOT
-from boxmot.utils.checks import TestRequirements
-
-
-# __tr = TestRequirements()
-# local_path = 'ultralytics'
-# __tr.check_packages((local_path,))
 
 from counting.count import counter_YOLO
 
@@ -18,9 +12,7 @@ from ultralytics.utils import LOGGER, ops, colorstr
 from functools import partial
 from pathlib import Path
 import csv
-import time
 import os
-from datetime import datetime
 
 
 def on_predict_start(predictor, persist=False):
@@ -60,29 +52,6 @@ def on_predict_start(predictor, persist=False):
 @torch.no_grad()
 def run(args):
     counter_yolo = counter_YOLO(args)
-
-    results = counter_yolo.track(
-        source=args.source,
-        conf=args.conf,
-        iou=args.iou,
-        show=args.show,
-        stream=True,
-        device=args.device,
-        show_conf=args.show_conf,
-        save_txt=args.save_txt,
-        show_labels=args.show_labels,
-        save=args.save,
-        verbose=args.verbose,
-        exist_ok=args.exist_ok,
-        project=args.project,
-        name=args.name,
-        classes=args.classes,
-        imgsz=args.imgsz,
-        vid_stride=args.vid_stride,
-        line_width=args.line_width,
-    )
-
-    return 1, 2, results
 
     counter_yolo.add_callback(
         "on_predict_start", partial(on_predict_start, persist=True)
@@ -159,8 +128,6 @@ def run(args):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
-    results = []
-
     for batch in counter_yolo.predictor.dataset:
         counter_yolo.predictor.run_callbacks("on_predict_batch_start")
         counter_yolo.predictor.batch = batch
@@ -180,38 +147,10 @@ def run(args):
             with profilers[4]:
                 counter_yolo.run_counting(i)
 
-            result = counter_yolo.predictor.results[i]
-
-            results.append(result)
-
-            result.speed = {
-                "preprocess": profilers[0].dt * 1e3 / n,
-                "inference": profilers[1].dt * 1e3 / n,
-                "postprocess": profilers[2].dt * 1e3 / n,
-                "tracking": profilers[3].dt * 1e3 / n,
-                "counting": profilers[4].dt * 1e3 / n,
-            }
-
             p, im0 = path[i], (
                 None if counter_yolo.predictor.source_type.tensor else im0s[i]
             )
             p = Path(p)
-
-            if (
-                counter_yolo.predictor.args.verbose
-                or counter_yolo.predictor.args.save
-                or counter_yolo.predictor.args.save_txt
-                or counter_yolo.predictor.args.show
-            ):
-
-                s += counter_yolo.write_results(
-                    i, counter_yolo.predictor.results, (p, im, im0)
-                )
-
-            if counter_yolo.predictor.args.save or counter_yolo.predictor.args.save_txt:
-                counter_yolo.predictor.results[i].save_dir = (
-                    counter_yolo.predictor.save_dir.__str__()
-                )
 
             if (
                 counter_yolo.predictor.args.show
@@ -292,4 +231,4 @@ def run(args):
             f"Results saved to {colorstr('bold', counter_yolo.predictor.save_dir)}{s}"
         )
 
-    return counter_yolo, profilers, results
+    return counter_yolo, profilers
