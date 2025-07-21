@@ -59,7 +59,7 @@ def run(args):
         time.sleep(1)
         print(i)
 
-    counter_yolo = counter_YOLO(args)
+    # counter_yolo = counter_YOLO(args)
 
     print("\nAFTER\n")
     for i in range(10):
