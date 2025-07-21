@@ -688,7 +688,7 @@ def torch_safe_load(weight):
             }
         ):  # for legacy 8.0 Classify and Pose models
             return (
-                torch.load(file, map_location="cpu", weights_only=False),
+                torch.load(file, map_location="cpu"),
                 file,
             )  # load
 
@@ -711,7 +711,7 @@ def torch_safe_load(weight):
         )
         check_requirements(e.name)  # install missing module
 
-        return torch.load(file, map_location="cpu", weights_only=False), file  # load
+        return torch.load(file, map_location="cpu"), file  # load
 
 
 def attempt_load_weights(weights, device=None, inplace=True, fuse=False):
