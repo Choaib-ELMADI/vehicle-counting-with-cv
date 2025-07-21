@@ -165,6 +165,9 @@ class Annotator_for_counting(Annotator):
 
 
 class counter_YOLO(YOLO):
+    pass
+    return
+
     def __init__(self, args):
         """
         Initializes the counter_YOLO object and sets up counting attributes and video information.
