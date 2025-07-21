@@ -8,7 +8,7 @@ from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import ROOT
 
-from counting.count import counter_YOLO
+# from counting.count import counter_YOLO
 
 from ultralytics.utils import LOGGER, ops, colorstr
 
