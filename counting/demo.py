@@ -25,7 +25,7 @@ args.use_mask = False
 args.save = True
 
 ti = time.time()
-counter_yolo, profilers, results = run(args)
+counter_yolo, profilers = run(args)
 tf = time.time()
 
 print(f"The total time required to process the whole program is: {tf-ti}s.")

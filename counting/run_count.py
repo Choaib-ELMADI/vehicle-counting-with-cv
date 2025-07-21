@@ -131,8 +131,13 @@ def run(args):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
-    memory_log_path = os.path.join(os.getcwd(), args.project, "memory_usage_log.csv")
+    memory_dir = os.path.join(os.getcwd(), args.project)
+    os.makedirs(memory_dir, exist_ok=True)  # Create if it doesn't exist
+    memory_log_path = os.path.join(memory_dir, "memory_usage_log.csv")
     memory_log_file = open(memory_log_path, "w", newline="")
+    print(
+        f"\n\n\n\n\n\n\nHEEEEEEEEEEEEEEEREEEEEE\n\n\n\n\n\n\n{memory_log_file}\n\n\n\n\n\n\n"
+    )
     mem_writer = csv.writer(memory_log_file)
     mem_writer.writerow(["frame", "timestamp (ms)", "RAM_used_MB", "SWAP_used_MB"])
 
