@@ -54,7 +54,7 @@ def on_predict_start(predictor, persist=False):
 
 
 # @torch.no_grad()
-def run():
+def my_run():
     print("\nBEFORE\n")
     for i in range(10):
         time.sleep(1)
