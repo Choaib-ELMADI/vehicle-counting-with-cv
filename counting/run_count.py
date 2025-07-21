@@ -52,7 +52,7 @@ def on_predict_start(predictor, persist=False):
     predictor.trackers = trackers
 
 
-@torch.no_grad()
+# @torch.no_grad()
 def run(args):
     print("\nBEFORE\n")
     for i in range(10):
