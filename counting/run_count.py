@@ -17,15 +17,15 @@ from pathlib import Path
 import csv
 import os
 
-
+"""
 def on_predict_start(predictor, persist=False):
-    """
+    #
     Initialize trackers for object tracking during prediction.
 
     Args:
         predictor (object): The predictor object to initialize trackers for.
         persist (bool, optional): Whether to persist the trackers if they already exist. Defaults to False.
-    """
+    #
 
     assert (
         predictor.custom_args.tracking_method in TRACKERS
@@ -50,6 +50,7 @@ def on_predict_start(predictor, persist=False):
         trackers.append(tracker)
 
     predictor.trackers = trackers
+"""
 
 
 # @torch.no_grad()
