@@ -1,3 +1,7 @@
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
 import time
 
 from counting.run_count import run
