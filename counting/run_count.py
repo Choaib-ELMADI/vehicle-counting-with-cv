@@ -56,6 +56,12 @@ def on_predict_start(predictor, persist=False):
 def run(args):
     counter_yolo = counter_YOLO(args)
 
+    for i in range(10):
+        time.sleep(1)
+        print(i)
+
+    return 1, 2
+
     counter_yolo.add_callback(
         "on_predict_start", partial(on_predict_start, persist=True)
     )
