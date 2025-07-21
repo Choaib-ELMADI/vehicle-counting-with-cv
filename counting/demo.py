@@ -31,7 +31,7 @@ args.save = True
 print("\nSTARTING FROM HERE\n")
 
 ti = time.time()
-counter_yolo, profilers = run()
+counter_yolo, profilers = run(args)
 tf = time.time()
 
 print(f"The total time required to process the whole program is: {tf-ti}s.")
