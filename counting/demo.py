@@ -8,7 +8,7 @@ from counting.run_count import run
 from counting.count import args
 
 
-args.source = "dataset/kech10_d.mp4"
+args.source = "dataset/kech10.mp4"
 args.name = "kech"
 args.project = "runs/count"
 
