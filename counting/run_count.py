@@ -54,13 +54,15 @@ def on_predict_start(predictor, persist=False):
 
 
 # @torch.no_grad()
-def run(args):
+def run():
     print("\nBEFORE\n")
     for i in range(10):
         time.sleep(1)
         print(i)
 
+    #
     # counter_yolo = counter_YOLO(args)
+    #
 
     print("\nAFTER\n")
     for i in range(10):

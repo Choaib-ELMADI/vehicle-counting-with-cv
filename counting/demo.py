@@ -28,15 +28,15 @@ args.use_mask = False
 
 args.save = True
 
-print("\nSTART HERE\n")
+print("\nSTARTING FROM HERE\n")
 
 ti = time.time()
-counter_yolo, profilers = run(args)
+counter_yolo, profilers = run()
 tf = time.time()
 
 print(f"The total time required to process the whole program is: {tf-ti}s.")
 
-print("\nSTOP HERE\n")
+print("\nSTOPPING HERE\n")
 
 # Counting Results
 print(f"The number of vehicles counted by the algorithm is: {counter_yolo.counter}")
