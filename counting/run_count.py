@@ -1,3 +1,6 @@
+import psutil
+import time
+
 import torch
 import cv2
 
@@ -128,6 +131,11 @@ def run(args):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
+    memory_log_path = os.path.join(os.getcwd(), args.project, "memory_usage_log.csv")
+    with open(memory_log_path, "w", newline="") as mem_log_file:
+        mem_writer = csv.writer(mem_log_file)
+        mem_writer.writerow(["frame", "timestamp (ms)", "RAM_used_MB", "SWAP_used_MB"])
+
     for batch in counter_yolo.predictor.dataset:
         counter_yolo.predictor.run_callbacks("on_predict_batch_start")
         counter_yolo.predictor.batch = batch
@@ -140,7 +148,6 @@ def run(args):
         n = len(im0s)
 
         for i in range(n):
-
             counter_yolo.predictor.seen += 1
 
             # Counting Phase
@@ -170,7 +177,6 @@ def run(args):
                 args.save_csv_count
                 and args.counting_approach == "tracking_with_two_lines"
             ):
-
                 current_time = (
                     counter_yolo.frame_number
                     / counter_yolo.video_attributes["frame_rate"]
@@ -194,6 +200,23 @@ def run(args):
                             }
                         )
 
+            # Memory usage logging
+            process = psutil.Process(os.getpid())
+            ram_used = process.memory_info().rss / (1024**2)  # in MB
+            swap_used = psutil.swap_memory().used / (1024**2)  # in MB
+            timestamp_ms = int(time.time() * 1000)
+
+            with open(memory_log_path, "a", newline="") as mem_log_file:
+                mem_writer = csv.writer(mem_log_file)
+                mem_writer.writerow(
+                    [
+                        counter_yolo.frame_number,
+                        timestamp_ms,
+                        round(ram_used, 2),
+                        round(swap_used, 2),
+                    ]
+                )
+
         counter_yolo.predictor.run_callbacks("on_predict_batch_end")
 
         # Print time (inference-only)
@@ -205,7 +228,6 @@ def run(args):
         counter_yolo.predictor.vid_writer[-1].release()  # release final video writer
 
     # Print results
-
     if counter_yolo.predictor.args.verbose and counter_yolo.predictor.seen:
         t = tuple(
             x.t / counter_yolo.predictor.seen * 1e3 for x in profilers
@@ -214,6 +236,7 @@ def run(args):
             f"Speed: %.1fms preprocess, %.1fms inference, %.1fms postprocess, %.1fms tracking, %.1fms counting per image at shape "
             f"{(1, 3, *im.shape[2:])}" % t
         )
+
     if (
         counter_yolo.predictor.args.save
         or counter_yolo.predictor.args.save_txt
