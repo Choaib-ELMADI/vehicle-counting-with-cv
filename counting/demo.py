@@ -4,7 +4,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 import time
 
-from counting.run_count import my_run
+from counting.run_count import run
 from counting.count import args
 
 
@@ -31,7 +31,7 @@ args.save = True
 print("\nSTARTING FROM HERE\n")
 
 ti = time.time()
-counter_yolo, profilers = my_run(args)
+counter_yolo, profilers = run(args)
 tf = time.time()
 
 print(f"The total time required to process the whole program is: {tf-ti}s.")
