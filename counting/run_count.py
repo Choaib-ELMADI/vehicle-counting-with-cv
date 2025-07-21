@@ -132,9 +132,9 @@ def run(args):
             writer.writeheader()
 
     memory_log_path = os.path.join(os.getcwd(), args.project, "memory_usage_log.csv")
-    with open(memory_log_path, "w", newline="") as mem_log_file:
-        mem_writer = csv.writer(mem_log_file)
-        mem_writer.writerow(["frame", "timestamp (ms)", "RAM_used_MB", "SWAP_used_MB"])
+    memory_log_file = open(memory_log_path, "w", newline="")
+    mem_writer = csv.writer(memory_log_file)
+    mem_writer.writerow(["frame", "timestamp (ms)", "RAM_used_MB", "SWAP_used_MB"])
 
     for batch in counter_yolo.predictor.dataset:
         counter_yolo.predictor.run_callbacks("on_predict_batch_start")
@@ -200,22 +200,19 @@ def run(args):
                             }
                         )
 
-            # Memory usage logging
             process = psutil.Process(os.getpid())
             ram_used = process.memory_info().rss / (1024**2)  # in MB
             swap_used = psutil.swap_memory().used / (1024**2)  # in MB
             timestamp_ms = int(time.time() * 1000)
 
-            with open(memory_log_path, "a", newline="") as mem_log_file:
-                mem_writer = csv.writer(mem_log_file)
-                mem_writer.writerow(
-                    [
-                        counter_yolo.frame_number,
-                        timestamp_ms,
-                        round(ram_used, 2),
-                        round(swap_used, 2),
-                    ]
-                )
+            mem_writer.writerow(
+                [
+                    counter_yolo.frame_number,
+                    timestamp_ms,
+                    round(ram_used, 2),
+                    round(swap_used, 2),
+                ]
+            )
 
         counter_yolo.predictor.run_callbacks("on_predict_batch_end")
 
@@ -226,6 +223,8 @@ def run(args):
     # Release assets
     if isinstance(counter_yolo.predictor.vid_writer[-1], cv2.VideoWriter):
         counter_yolo.predictor.vid_writer[-1].release()  # release final video writer
+
+    memory_log_file.close()
 
     # Print results
     if counter_yolo.predictor.args.verbose and counter_yolo.predictor.seen:
