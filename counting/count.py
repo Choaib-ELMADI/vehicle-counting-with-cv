@@ -19,8 +19,11 @@ class args:
     This class contains configuration parameters for the vehicle counting system using the YOLO model and various tracking approaches.
 
     Attributes:
+        is_static_input (bool): Whether the input frames are coming from a static video saved on the machine, or from a camera live stream.
+        camera_index: (int): Camera index.
+                             Need to be set if 'is_static_input' was set to 'False'.
         source (str): Filename of the video to perform counting on.
-                      Need to be set.
+                      Need to be set if 'is_static_input' was set to 'True'.
         name (str): Name of the folder for the current experiment results.
                     Need to be set.
         yolo_model (Path): Path to the YOLO model file.
@@ -93,6 +96,8 @@ class args:
                                This point is 80% of the width and 90% of the height.
     """
 
+    is_static_input = True
+    camera_index = 0
     source = "kech.mp4"
     name = "kech"
     yolo_model = Path("yolov8n.pt")
@@ -179,7 +184,7 @@ class counter_YOLO(YOLO):
         self.counting_preprocess = {}
         self.video_attributes = {}
 
-        self.get_video_info(args.source)
+        self.get_video_info(args.is_static_input, args.camera_index, args.source)
 
         with open("counting/index_to_labels.json", "r") as json_file:
             index_to_labels = json.load(json_file)
@@ -477,14 +482,21 @@ class counter_YOLO(YOLO):
         elif self.counting_attributes["slope1"]:
             self.set_distance_function(self.dist_s_bbox_line)
 
-    def get_video_info(self, source):
+    def get_video_info(self, is_static_input, camera_index, source):
         """
         Retrieves video properties (width, height, frame rate, total frames) from the video source.
 
         Args:
+            is_static_input: Whether using a static video or a camera live stream.
+            camera_index: Camera index.
             source: Path to the video file.
         """
-        video_path = os.path.join(os.getcwd(), source)
+
+        if is_static_input:
+            video_path = os.path.join(os.getcwd(), source)
+        else:
+            video_path = camera_index
+
         video_capture = cv2.VideoCapture(video_path)
 
         self.video_attributes["width"] = int(
@@ -494,8 +506,10 @@ class counter_YOLO(YOLO):
             video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
         )
         self.video_attributes["frame_rate"] = int(video_capture.get(cv2.CAP_PROP_FPS))
-        self.video_attributes["total_frames"] = int(
-            video_capture.get(cv2.CAP_PROP_FRAME_COUNT)
+        self.video_attributes["total_frames"] = (
+            int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
+            if is_static_input
+            else float("inf")
         )
 
         video_capture.release()

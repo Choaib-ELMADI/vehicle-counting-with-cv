@@ -106,24 +106,49 @@ def run(args):
     )
     counter_yolo.predictor.run_callbacks("on_predict_start")
 
-    for batch in counter_yolo.predictor.dataset:
+    if args.is_static_input:
+        for batch in counter_yolo.predictor.dataset:
+            counter_yolo.predictor.run_callbacks("on_predict_batch_start")
+            counter_yolo.predictor.batch = batch
+            path, im0s, vid_cap, s = batch
+
+            counter_yolo.frame_number = int(vid_cap.get(cv2.CAP_PROP_POS_FRAMES))
+
+            im0s, im, profilers = counter_yolo.run_pipeline(im0s, path, profilers)
+
+            n = len(im0s)
+
+            for i in range(n):
+                counter_yolo.predictor.seen += 1
+
+                # Counting Phase
+                with profilers[4]:
+                    counter_yolo.run_counting(i)
+
+            counter_yolo.predictor.run_callbacks("on_predict_batch_end")
+    else:
+        cap = cv2.VideoCapture(args.camera_index)
         counter_yolo.predictor.run_callbacks("on_predict_batch_start")
-        counter_yolo.predictor.batch = batch
-        path, im0s, vid_cap, s = batch
 
-        counter_yolo.frame_number = int(vid_cap.get(cv2.CAP_PROP_POS_FRAMES))
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-        im0s, im, profilers = counter_yolo.run_pipeline(im0s, path, profilers)
+            counter_yolo.frame_number = counter_yolo.predictor.seen + 1
+            im0s = [frame]
+            path = None
 
-        n = len(im0s)
+            im0s, im, profilers = counter_yolo.run_pipeline(im0s, path, profilers)
 
-        for i in range(n):
-            counter_yolo.predictor.seen += 1
+            for i in range(len(im0s)):
+                counter_yolo.predictor.seen += 1
 
-            # Counting Phase
-            with profilers[4]:
-                counter_yolo.run_counting(i)
+                # Counting Phase
+                with profilers[4]:
+                    counter_yolo.run_counting(i)
 
         counter_yolo.predictor.run_callbacks("on_predict_batch_end")
+        cap.release()
 
     return counter_yolo, profilers
