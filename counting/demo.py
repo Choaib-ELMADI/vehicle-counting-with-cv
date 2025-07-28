@@ -1,14 +1,10 @@
-import ssl
-
-ssl._create_default_https_context = ssl._create_unverified_context
-
 import time
 
 from counting.run_count import run
 from counting.count import args
 
 
-args.source = "dataset/kech10.mp4"
+args.source = "kech.mp4"
 args.name = "kech"
 args.project = "runs/count"
 
@@ -28,15 +24,11 @@ args.use_mask = False
 
 args.save = True
 
-print("\nSTARTING FROM HERE\n")
-
 ti = time.time()
 counter_yolo, profilers = run(args)
 tf = time.time()
 
 print(f"The total time required to process the whole program is: {tf-ti}s.")
-
-print("\nSTOPPING HERE\n")
 
 # Counting Results
 print(f"The number of vehicles counted by the algorithm is: {counter_yolo.counter}")
