@@ -64,7 +64,8 @@ def run(args):
     counter_yolo.add_callback(
         "on_predict_start", partial(on_predict_start, persist=True)
     )
-    counter_yolo.predictor.custom_args = args
+    # TODO: Uncomment this
+    # counter_yolo.predictor.custom_args = args
 
     # Setup model
     model = None

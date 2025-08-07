@@ -4,7 +4,7 @@ from counting.run_count import run
 from counting.count import args
 
 
-args.is_static_input = False
+args.is_static_input = True
 args.camera_index = 0
 args.source = "kech.mp4"
 args.name = "kech"
