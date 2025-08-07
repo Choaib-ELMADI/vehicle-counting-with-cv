@@ -60,12 +60,13 @@ def on_predict_start(predictor, persist=False):
 @torch.no_grad()
 def run(args):
     counter_yolo = counter_YOLO(args)
-    return counter_yolo, 2
 
     counter_yolo.add_callback(
         "on_predict_start", partial(on_predict_start, persist=True)
     )
     counter_yolo.predictor.custom_args = args
+
+    return counter_yolo, 2
 
     # Setup model
     model = None
